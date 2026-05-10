@@ -25,7 +25,6 @@
         <module>ms-1-common-lib</module>
         <module>ms-2-product-service</module>
         <module>ms-3-inventory-service</module>
-		<module>ms-4-order-service</module>
     </modules>
 
     <dependencyManagement>
