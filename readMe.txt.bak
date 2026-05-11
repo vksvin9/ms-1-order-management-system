@@ -591,19 +591,3 @@ http://localhost:5173
 Recommendation
 
 Proceed with Node.js 24.15.0 LTS. It is stable and fully compatible with your React + Vite + TypeScript frontend setup.
-
----
-Useful Commands
-Start Frontend
-cd ms-5-frontend-react
-npm run dev
-Install New Package
-npm install <package-name>
-Build Production Bundle
-npm run build
-Preview Production Build
-npm run preview
-Install Required Dependencies for This Project
-cd ms-5-frontend-react
-npm install bootstrap axios react-router-dom
-npm install -D @types/bootstrap
