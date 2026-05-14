@@ -1,5 +1,8 @@
 package com.vin.mapper;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import com.vin.dto.OrderRequestDto;
 import com.vin.dto.OrderResponseDto;
 import com.vin.entity.Order;
@@ -9,11 +12,15 @@ public final class OrderMapper {
     private OrderMapper() {
     }
 
-    public static Order toEntity(OrderRequestDto dto) {
+    public static Order toEntity(
+            OrderRequestDto dto,
+            BigDecimal totalAmount) {
+
         return Order.builder()
                 .productId(dto.getProductId())
                 .quantity(dto.getQuantity())
-                .totalAmount(dto.getTotalAmount())
+                .totalAmount(totalAmount)
+                .orderDate(LocalDateTime.now())
                 .build();
     }
 

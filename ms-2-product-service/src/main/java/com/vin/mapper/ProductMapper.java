@@ -10,28 +10,36 @@ public final class ProductMapper {
     }
 
     public static Product toEntity(ProductRequestDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
         return Product.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .price(dto.getPrice())
-                .stock(dto.getStock())
                 .build();
     }
 
-    public static ProductResponseDto toDto(Product product) {
+    public static ProductResponseDto toDto(Product entity) {
+        if (entity == null) {
+            return null;
+        }
+
         return ProductResponseDto.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .stock(product.getStock())
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
                 .build();
     }
 
-    public static void updateEntity(Product product, ProductRequestDto dto) {
-        product.setName(dto.getName());
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setStock(dto.getStock());
+    public static void updateEntity(
+            Product entity,
+            ProductRequestDto dto) {
+
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
     }
 }

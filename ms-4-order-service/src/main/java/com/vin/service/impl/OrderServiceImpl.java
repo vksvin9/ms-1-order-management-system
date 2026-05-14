@@ -1,10 +1,13 @@
 package com.vin.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.vin.client.InventoryClient;
+import com.vin.client.NotificationClient;
+import com.vin.client.ProductClient;
 import com.vin.dto.OrderRequestDto;
 import com.vin.dto.OrderResponseDto;
 import com.vin.entity.Order;
@@ -21,31 +24,65 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository repository;
     private final InventoryClient inventoryClient;
+    private final ProductClient productClient;
+    private final NotificationClient notificationClient;
 
     @Override
-    public OrderResponseDto create(OrderRequestDto request) {
+    public OrderResponseDto create(
+            OrderRequestDto request
+    ) {
+        BigDecimal productPrice =
+                productClient.getProductPrice(
+                        request.getProductId()
+                );
 
-        // Reserve stock in Inventory Service.
-        // If insufficient stock, a BusinessException is thrown
-        // and the order is NOT saved.
+        BigDecimal totalAmount =
+                productPrice.multiply(
+                        BigDecimal.valueOf(
+                                request.getQuantity()
+                        )
+                );
+
         inventoryClient.reserveStock(
                 request.getProductId(),
-                request.getQuantity());
+                request.getQuantity()
+        );
 
-        // Save order only after successful stock reservation
-        Order order = OrderMapper.toEntity(request);
+        Order order = OrderMapper.toEntity(
+                request,
+                totalAmount
+        );
 
-        return OrderMapper.toDto(repository.save(order));
+        Order savedOrder =
+                repository.save(order);
+
+        notificationClient.sendOrderCreatedNotification(
+                savedOrder.getId(),
+                savedOrder.getProductId(),
+                savedOrder.getQuantity(),
+                savedOrder.getTotalAmount()
+                        .doubleValue()
+        );
+
+        return enrichWithProductName(
+                OrderMapper.toDto(savedOrder)
+        );
     }
 
     @Override
-    public OrderResponseDto getById(Long id) {
+    public OrderResponseDto getById(
+            Long id
+    ) {
         Order order = repository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Order not found with id: " + id));
+                                "Order not found with id: "
+                                        + id
+                        ));
 
-        return OrderMapper.toDto(order);
+        return enrichWithProductName(
+                OrderMapper.toDto(order)
+        );
     }
 
     @Override
@@ -53,6 +90,7 @@ public class OrderServiceImpl implements OrderService {
         return repository.findAll()
                 .stream()
                 .map(OrderMapper::toDto)
+                .map(this::enrichWithProductName)
                 .toList();
     }
 
@@ -61,8 +99,22 @@ public class OrderServiceImpl implements OrderService {
         Order order = repository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Order not found with id: " + id));
+                                "Order not found with id: "
+                                        + id
+                        ));
 
         repository.delete(order);
+    }
+
+    private OrderResponseDto enrichWithProductName(
+            OrderResponseDto response
+    ) {
+        response.setProductName(
+                productClient.getProductName(
+                        response.getProductId()
+                )
+        );
+
+        return response;
     }
 }

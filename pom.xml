@@ -14,11 +14,11 @@
     <name>order-management-system</name>
     <description>Spring Boot Microservices Workspace</description>
 
-    <properties>
-        <java.version>21</java.version>
-        <spring.boot.version>3.5.14</spring.boot.version>
-        <spring.cloud.version>2025.0.0</spring.cloud.version>
-    </properties>
+	<properties>
+		<java.version>21</java.version>
+		<spring.boot.version>3.4.7</spring.boot.version>
+		<spring.cloud.version>2024.0.2</spring.cloud.version>
+	</properties>
 
     <!-- Add every Maven module here -->
     <modules>
@@ -26,7 +26,11 @@
         <module>ms-2-product-service</module>
         <module>ms-3-inventory-service</module>
 		<module>ms-4-order-service</module>
-		<module>ms-5-frontend-react</module>
+		<module>ms-6-discovery-server</module>
+		<module>ms-7-api-gateway</module>
+		<module>ms-8-auth-service</module>
+		<module>ms-9-config-server</module>
+		<module>ms-10-notification-service</module>
     </modules>
 
     <dependencyManagement>

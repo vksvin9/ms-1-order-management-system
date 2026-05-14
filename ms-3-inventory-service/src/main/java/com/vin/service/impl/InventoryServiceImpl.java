@@ -1,7 +1,10 @@
 package com.vin.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.vin.client.ProductClient;
 import com.vin.dto.InventoryRequestDto;
 import com.vin.dto.InventoryResponseDto;
 import com.vin.entity.Inventory;
@@ -18,54 +21,145 @@ import lombok.RequiredArgsConstructor;
 public class InventoryServiceImpl implements InventoryService {
 
     private final InventoryRepository repository;
+    private final ProductClient productClient;
 
     @Override
-    public InventoryResponseDto save(InventoryRequestDto request) {
-        Inventory inventory = repository.findByProductId(request.getProductId())
-                .orElse(Inventory.builder().productId(request.getProductId()).build());
+    public InventoryResponseDto save(
+            InventoryRequestDto request
+    ) {
+        productClient.validateProductExists(
+                request.getProductId()
+        );
 
-        inventory.setAvailableQuantity(request.getAvailableQuantity());
+        Inventory inventory = repository.findByProductId(
+                request.getProductId()
+        ).orElse(
+                Inventory.builder()
+                        .productId(
+                                request.getProductId()
+                        )
+                        .build()
+        );
 
-        return InventoryMapper.toDto(repository.save(inventory));
+        inventory.setAvailableQuantity(
+                request.getAvailableQuantity()
+        );
+
+        Inventory savedInventory =
+                repository.save(inventory);
+
+        return enrichWithProductName(
+                InventoryMapper.toDto(savedInventory)
+        );
     }
 
     @Override
-    public InventoryResponseDto getByProductId(Long productId) {
-        Inventory inventory = repository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Inventory not found for product ID: " + productId));
-
-        return InventoryMapper.toDto(inventory);
+    public List<InventoryResponseDto> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(InventoryMapper::toDto)
+                .map(this::enrichWithProductName)
+                .toList();
     }
 
     @Override
-    public InventoryResponseDto reserve(Long productId, Integer quantity) {
-        Inventory inventory = repository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Inventory not found for product ID: " + productId));
+    public InventoryResponseDto getByProductId(
+            Long productId
+    ) {
+        Inventory inventory =
+                repository.findByProductId(productId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Inventory not found for product ID: "
+                                                + productId
+                                ));
 
-        if (inventory.getAvailableQuantity() < quantity) {
-            throw new BusinessException("Insufficient stock");
+        return enrichWithProductName(
+                InventoryMapper.toDto(inventory)
+        );
+    }
+
+    @Override
+    public InventoryResponseDto reserve(
+            Long productId,
+            Integer quantity
+    ) {
+        Inventory inventory =
+                repository.findByProductId(productId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Inventory not found for product ID: "
+                                                + productId
+                                ));
+
+        if (inventory.getAvailableQuantity()
+                < quantity) {
+            throw new BusinessException(
+                    "Insufficient stock"
+            );
         }
 
         inventory.setAvailableQuantity(
-                inventory.getAvailableQuantity() - quantity);
+                inventory.getAvailableQuantity()
+                        - quantity
+        );
 
-        return InventoryMapper.toDto(repository.save(inventory));
+        Inventory updatedInventory =
+                repository.save(inventory);
+
+        return enrichWithProductName(
+                InventoryMapper.toDto(updatedInventory)
+        );
     }
 
     @Override
-    public InventoryResponseDto release(Long productId, Integer quantity) {
-        Inventory inventory = repository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Inventory not found for product ID: " + productId));
+    public InventoryResponseDto release(
+            Long productId,
+            Integer quantity
+    ) {
+        Inventory inventory =
+                repository.findByProductId(productId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Inventory not found for product ID: "
+                                                + productId
+                                ));
 
         inventory.setAvailableQuantity(
-                inventory.getAvailableQuantity() + quantity);
+                inventory.getAvailableQuantity()
+                        + quantity
+        );
 
-        return InventoryMapper.toDto(repository.save(inventory));
+        Inventory updatedInventory =
+                repository.save(inventory);
+
+        return enrichWithProductName(
+                InventoryMapper.toDto(updatedInventory)
+        );
+    }
+
+    @Override
+    public void delete(Long productId) {
+        Inventory inventory =
+                repository.findByProductId(productId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Inventory not found for productId: "
+                                                + productId
+                                ));
+
+        repository.delete(inventory);
+    }
+
+    private InventoryResponseDto enrichWithProductName(
+            InventoryResponseDto response
+    ) {
+        response.setProductName(
+                productClient.getProductName(
+                        response.getProductId()
+                )
+        );
+
+        return response;
     }
 }

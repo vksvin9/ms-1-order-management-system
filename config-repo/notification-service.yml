@@ -1,0 +1,26 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: notification-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+notification:
+  email:
+    enabled: true
+    from: no-reply@vin.com
+    to: admin@vin.com

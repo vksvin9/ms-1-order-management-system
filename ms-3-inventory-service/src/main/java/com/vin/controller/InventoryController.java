@@ -1,5 +1,7 @@
 package com.vin.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.vin.dto.ApiResponse;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/inventory")
+// @CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class InventoryController {
 
@@ -23,9 +26,15 @@ public class InventoryController {
             @Valid @RequestBody InventoryRequestDto request) {
 
         InventoryResponseDto response = service.save(request);
+
         return ResponseUtil.success(
                 "Inventory saved successfully",
                 response);
+    }
+
+    @GetMapping
+    public ApiResponse<List<InventoryResponseDto>> getAll() {
+        return ResponseUtil.success(service.getAll());
     }
 
     @GetMapping("/{productId}")
@@ -60,5 +69,15 @@ public class InventoryController {
         return ResponseUtil.success(
                 "Stock released successfully",
                 response);
+    }
+
+    @DeleteMapping("/{productId}")
+    public ApiResponse<Void> delete(
+            @PathVariable("productId") Long productId) {
+
+        service.delete(productId);
+
+        return ResponseUtil.success(
+                "Inventory deleted successfully");
     }
 }
