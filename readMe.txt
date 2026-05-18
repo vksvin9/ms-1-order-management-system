@@ -1,9 +1,7 @@
 ==================================================
 Project Name: order-management-system
-
 Goal:
 Build a complete full-stack enterprise application using:
-
 * React Frontend
 * Spring Boot Microservices
 * H2 Database
@@ -19,491 +17,879 @@ Build a complete full-stack enterprise application using:
 * Docker
 * Kubernetes
 * CI/CD
-
 ==================================================
 PHASE 0: PROJECT SETUP & GIT
 ============================
-
 Topics:
-
 * Create Git repository
 * Initialize root project structure
 * Add README.md
 * Define naming conventions
-
 Modules:
-
 * frontend-react
 * common-lib
 * all backend services (empty folders)
-
 Testing:
-
 * Project opens successfully in VS Code
 * Git commit works
-
 Outcome:
 Repository and folder structure ready
-
 ==================================================
 PHASE 1: FOUNDATION (COMMON LIBRARY)
 ====================================
-
 Topics:
-
 * Maven multi-module project
 * Common response wrapper
 * Global exception handling
 * Validation
 * AOP logging
 * Utility classes
-
 Modules:
-
 * common-lib
-
 Testing:
-
 * Unit tests for ApiResponse and exception classes
 * Validation errors return standard JSON
-
 Outcome:
 Reusable shared backend library
-
 ==================================================
 PHASE 2: PRODUCT SERVICE
 ========================
-
 Topics:
-
 * CRUD APIs
 * H2 Database
 * JPA
 * DTO mapping
 * Validation
-
 Modules:
-
 * product-service
-
 Testing:
-
 * Create, update, delete, list products
 * Verify records in H2 console
-
 Outcome:
 Working Product Service
-
 ==================================================
 PHASE 3: INVENTORY SERVICE
 ==========================
-
 Topics:
-
 * Stock management
 * Separate H2 database
-
 Modules:
-
 * inventory-service
-
 Testing:
-
 * Add stock
 * Reserve stock
 * Release stock
-
 Outcome:
 Working Inventory Service
-
 ==================================================
 PHASE 4: ORDER SERVICE
 ======================
-
 Topics:
-
 * Order persistence
 * Business logic
-
 Modules:
-
 * order-service
-
 Testing:
-
 * Create and retrieve orders
-
 Outcome:
 Working Order Service
-
 ==================================================
 PHASE 5: CORE BACKEND INTEGRATION
 =================================
-
 Topics:
-
 * OpenFeign or RestClient
 * Service-to-service communication
-
 Testing:
-
 * Place order
 * Inventory decreases
 * Order saved
-
 Outcome:
 Product + Inventory + Order integrated
-
 ==================================================
 PHASE 6: REACT PROJECT SETUP
 ============================
-
 Topics:
-
 * Vite + React + TypeScript
 * Bootstrap
 * Axios
 * React Router
-
 Modules:
-
 * frontend-react
-
 Testing:
-
 * App runs on port 5173
 * Navigation works
-
 Outcome:
 Frontend foundation ready
-
 ==================================================
 PHASE 7: REACT PRODUCT MODULE
 =============================
-
 Topics:
-
 * Product list
 * Create/edit forms
 * Delete confirmation
-
 Testing:
-
 * Perform full product CRUD from UI
-
 Outcome:
 Frontend connected to Product Service
-
 ==================================================
 PHASE 8: REACT INVENTORY MODULE
 ===============================
-
 Topics:
-
 * Manage stock quantities
-
 Testing:
-
 * Update inventory from UI
-
 Outcome:
 Inventory UI completed
-
 ==================================================
 PHASE 9: REACT ORDER MODULE
 ===========================
-
 Topics:
-
 * Place orders
 * View order history
-
 Testing:
-
 * Create orders from UI
 * Verify backend integration
-
 Outcome:
 Core full-stack workflow complete
-
 ==================================================
 PHASE 10: DISCOVERY SERVER (EUREKA)
 ===================================
-
 Topics:
-
 * Service registration and discovery
-
 Modules:
-
 * discovery-server
-
 Testing:
-
 * All services visible in Eureka dashboard
-
 Outcome:
 No hardcoded URLs
-
 ==================================================
 PHASE 11: API GATEWAY
 =====================
-
 Topics:
-
 * Centralized routing
 * CORS configuration
-
 Modules:
-
 * api-gateway
-
 Testing:
-
 * React calls Gateway instead of direct services
-
 Outcome:
 Single entry point for frontend
-
 ==================================================
 PHASE 12: CONFIG SERVER + CONFIG REPOSITORY
 ===========================================
-
 Topics:
-
 * Centralized YAML configuration
-
 Modules:
-
 * config-server
 * config-repo
-
 Testing:
-
 * Services load configuration from Config Server
-
 Outcome:
 Externalized configuration
-
 Config Server Health
 http://localhost:8888/actuator/health
 Product Service Configuration
 http://localhost:8888/product-service/default
 Auth Service Configuration
 http://localhost:8888/auth-service/default
-
 ==================================================
 PHASE 13: SECRETS MANAGEMENT
 ============================
-
 Topics:
-
 * Environment variables
 * Secret placeholders
-
 Testing:
-
 * JWT secret and credentials loaded from environment
-
 Outcome:
 Sensitive data removed from source code
-
 ==================================================
 PHASE 14: AUTH SERVICE + JWT
 ============================
-
 Topics:
-
 * Register/login
 * JWT token generation
 * Protected routes
-
 Modules:
-
 * auth-service
-
 Testing:
-
 * Login returns token
 * Protected APIs require token
 * React stores token and sends Authorization header
-
 Outcome:
 Application secured end-to-end
-
 ==================================================
 PHASE 15: REACT AUTH MODULE
 ===========================
-
 Topics:
-
 * Login page
 * Register page
 * Protected routes
 * Logout
-
 Testing:
-
 * Unauthorized users redirected to login
 * Authenticated users access dashboard
-
 Outcome:
 Secure frontend experience
-
 ==================================================
 PHASE 16: NOTIFICATION SERVICE
 ==============================
-
 Topics:
-
 * Async notifications after order creation
-
 Modules:
-
 * notification-service
-
 Testing:
-
 * Order creation triggers notification logs
-
 Outcome:
 Event-driven processing added
-
 ==================================================
 PHASE 17: RESILIENCE4J
 ======================
-
 Topics:
-
 * Circuit breaker
 * Retry
 * Timeout
 * Fallback
-
 Testing:
-
 * Stop Inventory Service and verify graceful fallback
-
 Outcome:
 Fault tolerance implemented
-
 ==================================================
 PHASE 18: ZIPKIN
 ================
-
 Topics:
-
 * Distributed tracing
-
 Testing:
-
 * Trace requests across services
-
 Outcome:
 Request flow visibility
-
+Start Zipkin with Docker
+docker run -d --name zipkin -p 9411:9411 openzipkin/zipkin
+This command will:
+Download the official OpenZipkin Docker image
+ automatically (if not already present)
+Start Zipkin in the background
+Expose the UI on port 9411
+Open the Zipkin UI
+Zipkin UI - http://localhost:9411/zipkin/
+Verify the Container
+docker ps
+You should see a container named zipkin.
+Useful Docker Commands
+Stop Zipkin
+docker stop zipkin
+Start Again
+docker start zipkin
+Remove Container
+docker rm -f zipkin
 ==================================================
 PHASE 19: PROMETHEUS + GRAFANA
 ==============================
-
 Topics:
-
 * Metrics collection
 * Dashboards
-
 Testing:
-
 * View health, JVM, and custom metrics
-
 Outcome:
 Monitoring stack operational
-
+docker run -d --name prometheus -p 9090:9090 -v "C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system\prometheus.yml:/etc/prometheus/prometheus.yml" prom/prometheus
+Verify Prometheus
+Prometheus UI - http://localhost:9090/query
+docker restart prometheus
+---
+docker run -d --name grafana -p 3000:3000 grafana/grafana-oss
+http://localhost:3000/login admin:admin
+Connect Grafana to Prometheus
+1. Open Grafana
+Grafana UI
+Login with:
+Username: admin
+Password: admin
+Set a new password when prompted.
+2. Add Prometheus as a Data Source
+In Grafana:
+Click Connections → Data sources.
+Click Add data source.
+Select Prometheus.
+Set the URL to:
+http://host.docker.internal:9090
+Click Save & test.
+Expected message:
+Successfully queried the Prometheus API.
+3. Import a Spring Boot Dashboard
+Recommended Dashboard ID
+4701
+This is a widely used Spring Boot and Micrometer dashboard.
+Import Steps
+Click Dashboards → Import.
+Enter dashboard ID 4701.
+Click Load.
+Select the Prometheus data source.
+Click Import.
+4. View Metrics
+The dashboard will display metrics such as:
+JVM heap and non-heap memory
+CPU usage
+Garbage collection
+Thread counts
+HTTP request throughput and latency
+5. Select a Service
+Use the dashboard variables to choose:
+order-service
+product-service
+inventory-service
+auth-service
+6. Generate Activity
+Create orders and perform CRUD operations in your application to populate metrics.
 ==================================================
 PHASE 20: DOCKER
 ================
-
 Topics:
-
 * Dockerfile for each backend service
 * Dockerfile for React + Nginx
-
 Testing:
-
 * Build and run containers individually
-
 Outcome:
 All components containerized
-
+1) Config-server: 
+	CREATE DOCKER NETWORK > CREATE DOCKERFILE > BUILD JAR > BUILD DOCKER-IMAGE > RUN IMAGE (CONTAINER)) > TEST
+2) Other (Use MultiStage Docker file)
+	CREATE DOCKER NETWORK > CREATE DOCKERFILE (COMBINED BUILD JAR & DOCKER-IMAGE) > BUILD DOCKER-IMAGE  > RUN IMAGE (CONTAINER)) > TEST
+## STEP 1: CREATE DOCKER NETWORK
+Create a shared Docker network so all containers can communicate using service names instead of IP addresses.
+	### File: `docker/create-network.bat` bat
+	@echo off
+	docker network create order-network
+	pause 
+	### Alternative PowerShell Command 
+	docker network create order-network 
+	### Run 
+	cd ms-1-order-management-system
+	docker\create-network.bat 
+	### Verify 
+	docker network ls 
+	You should see: text
+	order-network 
+# STEP 2: CREATE DOCKERFILE 
+	## File: `ms-9-config-server/Dockerfile`
+		FROM eclipse-temurin:21-jdk
+		WORKDIR /app
+		COPY target/*.jar app.jar
+		EXPOSE 8888
+		ENTRYPOINT ["java", "-jar", "app.jar"] 
+# STEP 3: BUILD JA & DOCKER-IMAGE > RUN IMAGE (CONTAINER)
+	## Build the Config Server JAR 
+		###Build from root folder
+			cd C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system
+			mvn clean package -pl ms-9-config-server -am -DskipTests
+				mvn                 → Maven command-line tool
+				clean               → Delete previous build output (target/ folders)
+				package             → Compile code and create JAR file
+				-pl                 → Project List option (build only selected module)
+				ms-9-config-server  → Module name to build
+				-am                 → Also Make required dependent modules (e.g., common-lib)
+				-DskipTests         → Skip executing tests during build
+		####Build from service folder
+			cd C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system\ms-9-config-server
+			mvn clean package -DskipTests 
+			This generates 
+			ms-9-config-server\target\config-server-0.0.1-SNAPSHOT.jar
+		###
+			mvn spring-boot:run   → Run directly from source code
+			mvn clean package     → Create executable Spring Boot JAR
+			mvn clean install     → Create executable JAR and install to .m2
+			docker build          → Package executable JAR into Docker image
+	## Build Docker Image 
+		cd ms-9-config-server
+		docker build -t config-server:1.0 . 
+			docker              → Docker CLI command
+			build               → Create a Docker image from a Dockerfile
+			-t                  → Assign a name and tag to the image
+			config-server       → Image name
+			1.0                 → Image tag/version
+			config-server:1.0   → Full image reference (image:tag)
+			.                   → Current directory as the build context
+	## Run Container 
+		docker run -d --name config-server --network order-network -p 8888:8888 config-server:1.0
+			docker           → Docker CLI command
+			run              → Create and start a new container
+			-d               → Run in background (detached mode)
+			--name           → Assign a custom container name
+			config-server    → Container name
+			--network        → Connect container to a Docker network
+			order-network    → Docker network name
+			-p               → Publish port mapping
+			8888:8888        → Host port 8888 → Container port 8888
+			config-server    → Docker image name
+			1.0              → Image tag/version
+			config-server:1.0 → Full image reference (image:tag)
+	## Verify Container
+		### Check Running Containers 
+		docker ps 
+		### View Logs 
+		docker logs -f config-server 
+		### Test Health Endpoint
+		Open in browser 
+		http://localhost:8888/actuator/health 
+		Expected response: 
+		{"status":"UP"}
+		### Test Configuration Endpoint
+		Open 
+		http://localhost:8888/product-service/default 
+	## Useful Commands
+		### Stop Container 
+		docker stop config-server 
+		### Start Container 
+		docker start config-server 
+		### Remove Container 
+		docker rm -f config-server 
+		### Remove Image 
+		docker rmi config-server:1.0 
+	## Expected Outcome
+		* Config Server starts inside Docker.
+		* Exposed on port `8888`.
+		* Accessible from host and other containers using:
+		  * `http://localhost:8888`
+		  * `http://config-server:8888`
+	## Git Commit 
+		git add ms-9-config-server/Dockerfile
+		git commit -m "Phase 20 - Add Dockerfile for Config Server" 
+#Build Singel Module
+cd C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system
+mvn clean package -pl ms-9-config-server -am -DskipTests
+docker rm -f config-server
+docker build --no-cache -t config-server:1.0 -f ms-9-config-server/Dockerfile .
+docker run -d --name config-server --network order-network -p 8888:8888 config-server:1.0
+***Separate building jar manually and docker image using Dokcerfile***
+# 1. Create Docker network (run once)
+	docker network create order-network
+# 2. Build all required Spring Boot JARs
+	mvn clean package -DskipTests
+	# WAIT until Maven shows:
+	# [INFO] BUILD SUCCESS
+# 3. Remove existing containers
+	docker rm -f config-server discovery-server product-service auth-service api-gateway frontend-react
+# 4. Build Docker images
+	docker build --no-cache -t config-server:1.0 -f ms-9-config-server/Dockerfile .
+	docker build --no-cache -t discovery-server:1.0 ms-6-discovery-server
+	docker build --no-cache -t auth-service:1.0 ms-8-auth-service
+	docker build --no-cache -t product-service:1.0 ms-2-product-service
+	docker build --no-cache -t api-gateway:1.0 ms-7-api-gateway
+	docker build --no-cache -t frontend-react:1.0 ms-5-frontend-react
+	# WAIT until each docker build ends with:
+	# Successfully tagged <image-name>:1.0
+# 5. Start Config Server
+	docker run -d --name config-server --network order-network -p 8888:8888 config-server:1.0
+	# WAIT 20-30 seconds
+	# VERIFY: http://localhost:8888/actuator/health  => {"status":"UP"}
+	#LOGS: docker logs -f config-server || docker logs config-server --tail 100
+# 6. Start Discovery Server
+	docker run -d --name discovery-server --network order-network -e CONFIG_SERVER_URL=http://config-server:8888 -e EUREKA_SERVER_URL=http://discovery-server:8761/eureka/ -p 8761:8761 discovery-server:1.0
+	# WAIT 20-30 seconds
+	# VERIFY: http://localhost:8761  opens successfully
+	#LOGS: docker logs -f discovery-server || docker logs discovery-server --tail 100
+# 7. Start Auth Service
+	docker run -d --name auth-service --network order-network -e CONFIG_SERVER_URL=http://config-server:8888 -e EUREKA_SERVER_URL=http://discovery-server:8761/eureka/ -p 8084:8084 auth-service:1.0
+	# WAIT 20-30 seconds
+	# VERIFY in Eureka: AUTH-SERVICE status = UP
+	#LOGS: docker logs -f auth-service || docker logs auth-service --tail 100
+# 8. Start Product Service
+	docker run -d --name product-service --network order-network -e CONFIG_SERVER_URL=http://config-server:8888 -e EUREKA_SERVER_URL=http://discovery-server:8761/eureka/ -p 8081:8081 product-service:1.0
+	# WAIT 20-30 seconds
+	# VERIFY in Eureka: PRODUCT-SERVICE status = UP
+	#LOGS: docker logs -f product-service || docker logs product-service --tail 100
+# 9. Start API Gateway
+	docker run -d --name api-gateway --network order-network -e CONFIG_SERVER_URL=http://config-server:8888 -e EUREKA_SERVER_URL=http://discovery-server:8761/eureka/ -e FRONTEND_URL=http://localhost:5173 -p 8080:8080 api-gateway:1.0
+	# WAIT 20-30 seconds
+	# VERIFY: http://localhost:8080/actuator/health  => {"status":"UP"}
+	#LOGS: docker logs -f api-gateway || docker logs api-gateway --tail 100
+# 10. Start React Frontend
+	docker run -d --name frontend-react --network order-network -p 5173:80 frontend-react:1.0
+	# WAIT 5-10 seconds
+	#LOGS: docker logs -f frontend-react || docker logs frontend-react --tail 100
+# 11. Open Application
+	# http://localhost:5173
+# 12. If login fails due to old token, clear browser storage:
+	# localStorage.clear();
+	# sessionStorage.clear();
+# 13. Verify Running Containers
+	docker ps
+# 14. Monitor Supporting Tools
+	Zipkin
+	http://localhost:9411
+	Prometheus
+	http://localhost:9090
+	Grafana
+	http://localhost:3000
+7. Check Logs
+	docker logs -f product-service --tail 100
+	docker logs -f api-gateway
+	docker logs -f frontend-react
+	8. Full End-to-End Test
+	1. Open http://localhost:5173
+	2. Login as ADMIN
+	3. Create a product
+	4. Add inventory
+	5. Place an order
+	6. Verify dashboard metrics
+	7. Check traces in Zipkin
+	8. Check metrics in Grafana
+	9. Container Health Check
+	docker ps
+	docker stats
+------------------------------------------------------------------------------------------------------------------------
+#MULTI STAGE DOCKER FILE
+Yes. You can combine JAR building and Docker image creation into a single Docker build using a multi-stage Dockerfile.
+	Why We Initially Built Them Separately
+		mvn clean package   → Creates the JAR
+		docker build       → Packages the JAR into an image
+		This approach is simple and helps you understand each step.
+	Better Approach: Multi-Stage Docker Build
+		Docker can run Maven inside the build process:
+		Copy source code
+		Run mvn clean package
+		Create the final lightweight image
+		Copy only the generated JAR
+	Then you only run:
+		docker build -t config-server:1.0 .
+##Multi-Stage Dockerfile for Config Server
+	#File: ms-9-config-server/Dockerfile
+	# Stage 1: Build the application
+	FROM maven:3.9.11-eclipse-temurin-21 AS builder
+	WORKDIR /build
+	# Copy parent POM, common library, and this module
+	COPY pom.xml .
+	COPY ms-1-common-lib ms-1-common-lib
+	COPY ms-9-config-server ms-9-config-server
+	# Build only this module and its dependencies
+	RUN mvn clean package -pl ms-9-config-server -am -DskipTests
+	# Stage 2: Runtime image
+	FROM eclipse-temurin:21-jre
+	WORKDIR /app
+	COPY --from=builder /build/ms-9-config-server/target/*.jar app.jar
+	EXPOSE 8888
+	ENTRYPOINT ["java", "-jar", "app.jar"]
+	Build from Root Directory
+	cd C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system
+	docker build -t config-server:1.0 -f ms-9-config-server/Dockerfile .
+	-f ms-9-config-server/Dockerfile → Use that Dockerfile
+	. → Root folder is the build context so Docker can access all required modules
+	Run Container
+	docker run -d --name config-server --network order-network -p 8888:8888 config-server:1.0
+	Advantages
+	Single command      → docker build ...
+	No local Maven build required
+	Consistent builds   → Same process on any machine
+	CI/CD friendly      → Ideal for pipelines
+	Smaller final image → Only runtime JAR included
+	Recommended Enterprise Practice
+	Use multi-stage Dockerfiles for all services. This is the standard approach in modern Docker, CI/CD, and Kubernetes deployments.
+	---
 ==================================================
-PHASE 21: DOCKER COMPOSE
+PHASE 21: DOCKER COMPOSE (issue when (1)services starting be fore db is up & (2)services are up together and not wait for dependent servcies to up)
 ========================
-
 Topics:
-
 * Multi-container orchestration
-
 Testing:
-
 * Entire system starts with one command
-
 Outcome:
 Complete local container environment
-
+Phase 21 – Build, Run, Test, and Git Commit
+After creating:
+.env
+docker-compose.yml
+#Phase 21 – Build, Run, Test, and Git Commit
+	docker compose down -v
+	docker rm -f zipkin prometheus grafana config-server discovery-server auth-service product-service inventory-service order-service notification-service api-gateway frontend-react
+	docker compose up -d
+1. Create Docker Network (Run Once)
+	docker network create order-network
+2. Build All Docker Images
+	#Remove existing containers
+	docker rm -f zipkin prometheus grafana config-server discovery-server auth-service product-service inventory-service order-service notification-service api-gateway frontend-react
+	#Run from the project root:
+	cd C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system
+	mvn clean package -DskipTests
+	docker build --no-cache -t config-server:1.0 -f ms-9-config-server/Dockerfile .
+	docker build --no-cache -t discovery-server:1.0 ms-6-discovery-server
+	docker build --no-cache -t auth-service:1.0 ms-8-auth-service
+	docker build --no-cache -t product-service:1.0 ms-2-product-service
+	docker build --no-cache -t inventory-service:1.0 ms-3-inventory-service
+	docker build --no-cache -t order-service:1.0 ms-4-order-service
+	docker build --no-cache -t notification-service:1.0 ms-10-notification-service
+	docker build --no-cache -t api-gateway:1.0 ms-7-api-gateway
+	docker build --no-cache -t frontend-react:1.0 ms-5-frontend-react
+3. Start the Entire Environment
+	docker compose up -d
+4. Verify Container Status
+	docker compose ps
+	Expected:
+	config-server → healthy
+	discovery-server → healthy
+	All other services → running
+5. Monitor Startup Logs
+	docker compose logs -f
+	Specific service logs:
+	docker compose logs -f config-server
+	docker compose logs -f discovery-server
+	docker compose logs -f product-service
+	docker compose logs -f api-gateway
+6. Verify URLs
+	Component	URL
+	Frontend	http://localhost:5173
+	API Gateway	http://localhost:8080/actuator/health
+	Eureka Dashboard	http://localhost:8761
+	Config Server	http://localhost:8888/actuator/health
+	Zipkin	http://localhost:9411
+	Prometheus	http://localhost:9090
+	Grafana	http://localhost:3000
+	Grafana login:
+	Username: admin
+	Password: admin
+7. End-to-End Functional Test
+	Open http://localhost:5173
+	Register or login
+	Create a product
+	Update inventory
+	Place an order
+	Confirm notification logs
+	Verify traces in Zipkin
+	Verify metrics in Prometheus
+	Import dashboard 4701 in Grafana
+8. Stop Environment
+	docker compose down
+9. Restart Environment
+	docker compose up -d
+10. Remove Containers and Volumes
+	docker compose down -v
+11. Git Commit
+	git add config-repo/*.yml .env docker-compose.yml
+	git commit -m "Phase 21 - Add Docker Compose orchestration with health checks"
+	Expected Outcome
+	A single command:
+	docker compose up -d
+	will:
+	Start Zipkin, Prometheus, and Grafana
+	Start Config Server and wait until healthy
+	Start Discovery Server and wait until healthy
+	Start Auth, Product, Inventory, Order, and Notification services
+	Start API Gateway
+	Start React Frontend
+	All services use persistent H2 file databases stored in Docker volumes.
+Phase 21 Completed
+	You have now implemented:
+	Multi-container orchestration
+	Ordered startup with health checks
+	Persistent H2 storage
+	Centralized environment configuration
+	One-command startup and shutdown
 ==================================================
 PHASE 22: KUBERNETES
 ====================
-
 Topics:
-
 * Deployments
 * Services
 * ConfigMaps
 * Secrets
 * Ingress
-
 Testing:
-
 * Full application runs on Minikube or kind
-
 Outcome:
 Production-style orchestration
+---
+Objective
+
+Deploy the complete order-management-system to Kubernetes using:
+
+Deployments
+Services
+ConfigMaps
+Secrets
+Ingress
+Outcome
+
+A production-style environment running on:
+
+Minikube or
+kind
+Architecture in Kubernetes
+7
+Ingress
+   ↓
+Frontend Service
+   ↓
+API Gateway Service
+   ↓
+-------------------------------------------------
+| Auth | Product | Inventory | Order | Notification |
+-------------------------------------------------
+   ↓
+Config Server
+   ↓
+Discovery Server
+Prerequisites
+
+Before starting Phase 22, ensure:
+
+Phase 20 (Docker) completed
+Phase 21 (Docker Compose) completed and working
+Docker images built locally
+Docker Desktop running
+Recommended Local Kubernetes Platform
+Use Minikube (Recommended)
+
+Minikube
+
+Why:
+
+Simplest for learning
+Includes ingress support
+Excellent for Spring Boot microservices
+Installation Commands (Windows PowerShell)
+winget install Kubernetes.minikube
+winget install Kubernetes.kubectl
+
+Verify:
+
+minikube version
+kubectl version --client
+Start Cluster
+minikube start --driver=docker --cpus=4 --memory=8192
+
+Verify:
+
+kubectl get nodes
+
+Expected:
+
+minikube   Ready
+Enable Ingress Controller
+minikube addons enable ingress
+
+Verify:
+
+kubectl get pods -n ingress-nginx
+Kubernetes Folder Structure
+
+Create the following directory in the project root:
+
+k8s/
+├── namespace.yml
+├── configmap.yml
+├── secret.yml
+├── config-server/
+├── discovery-server/
+├── auth-service/
+├── product-service/
+├── inventory-service/
+├── order-service/
+├── notification-service/
+├── api-gateway/
+├── frontend-react/
+└── ingress.yml
+Phase 22 Implementation Order
+Phase 22 Implementation Order
+
+Recommended sequence for Kubernetes deployment.
+
+0
+3
+6
+9
+12
+Namespace
+ConfigMap
+Secret
+Config Server
+Discovery Server
+Backend Services
+API Gateway
+Frontend
+Ingress
+Kubernetes Concepts You Will Implement
+Concept	Purpose
+Namespace	Isolate project resources
+ConfigMap	Non-sensitive environment variables
+Secret	JWT and passwords
+Deployment	Manage Pods
+Service	Internal networking
+Ingress	External access
+Readiness Probe	Wait until service is healthy
+Persistent Volume	Optional for databases
+Images Used in Kubernetes
+
+The same Docker images from Phase 21 will be reused:
+
+config-server:1.0
+discovery-server:1.0
+auth-service:1.0
+product-service:1.0
+inventory-service:1.0
+order-service:1.0
+notification-service:1.0
+api-gateway:1.0
+frontend-react:1.0
+Build Images Before Deployment
+mvn clean package -DskipTests
+
+docker build --no-cache -t config-server:1.0 -f ms-9-config-server/Dockerfile .
+docker build --no-cache -t discovery-server:1.0 ms-6-discovery-server
+docker build --no-cache -t auth-service:1.0 ms-8-auth-service
+docker build --no-cache -t product-service:1.0 ms-2-product-service
+docker build --no-cache -t inventory-service:1.0 ms-3-inventory-service
+docker build --no-cache -t order-service:1.0 ms-4-order-service
+docker build --no-cache -t notification-service:1.0 ms-10-notification-service
+docker build --no-cache -t api-gateway:1.0 ms-7-api-gateway
+docker build --no-cache -t frontend-react:1.0 ms-5-frontend-react
+Success Criteria
+
+At the end of Phase 22:
+
+kubectl get pods shows all pods Running
+kubectl get svc shows all services
+Ingress exposes the application
+Frontend accessible in browser
+Product creation, inventory update, and order placement work successfully
+Files to Be Created in This Phase
+namespace.yml
+configmap.yml
+secret.yml
+Deployment and Service YAML for every component
+ingress.yml
+Git Commit (After Completion)
+git add k8s
+git commit -m "Phase 22 - Deploy application to Kubernetes"
+Next Step
+
+Type next to begin with:
+
+k8s/namespace.yml
+k8s/configmap.yml
+k8s/secret.yml
 
 ==================================================
 PHASE 23: CI/CD
 ===============
-
 Topics:
-
 * Build, test, Docker image creation
 * Kubernetes deployment
-
 Tools:
-
 * GitHub Actions or Jenkins
-
 Outcome:
 Automated pipeline
-
 ==================================================
 PHASE 24: PRODUCTION HARDENING
 ==============================
-
 Topics:
-
 * Profiles
 * Health probes
 * Resource limits
 * Security best practices
-
 Outcome:
 Production-ready application
-
 ==================================================
 Continuation Snapshot for Next Chat
 ==========================
-
 Project: order-management-system
-
 Tech Stack
 - Java 21
 - Spring Boot 3.4.7
@@ -514,7 +900,6 @@ Tech Stack
 - Eureka Discovery Server
 - Spring Cloud Gateway
 - JWT Authentication
-
 Package Convention
 - com.vin
 - com.vin.config
@@ -524,7 +909,6 @@ Package Convention
 - com.vin.client
 - com.vin.filter
 - com.vin.util
-
 User Preferences
 - Use application.yml
 - Provide complete code directly in chat
@@ -535,7 +919,6 @@ User Preferences
   - application.yml
   - All required files
   - Build/run/test commands
-
 Completed Modules
 - ms-1-common-lib
 - ms-2-product-service
@@ -545,7 +928,6 @@ Completed Modules
 - ms-6-discovery-server
 - ms-7-api-gateway
 - ms-8-auth-service
-
 Completed Features
 - Product CRUD
 - Inventory management
@@ -559,7 +941,6 @@ Completed Features
 - Protected React routes
 - Role-based UI (ADMIN/USER)
 - Dashboard analytics
-
 Correct Enterprise Roadmap Status
 Completed:
 0. Project Setup & Git
@@ -576,7 +957,6 @@ Completed:
 11. API Gateway
 14. Auth Service + JWT
 15. React Auth Module
-
 Pending:
 12. Config Server + Config Repository
 13. Secrets Management
@@ -589,10 +969,8 @@ Pending:
 22. Kubernetes
 23. CI/CD
 24. Production Hardening
-
 Next Phase
 Phase 12 – Config Server + Config Repository
-
 Implement:
 - Root pom.xml module entry
 - ms-9-config-server
@@ -601,31 +979,24 @@ Implement:
 - ConfigServerApplication.java
 - Build and run instructions
 - Test steps
-
 Goal
 - Centralized YAML configuration
 - All services load configuration from Config Server
 - Prepare for environment-based secrets in Phase 13
-
 ==================================================
 WHEN TO TEST
 ============
-
 After every phase:
-
 1. Build
 2. Run
 3. Test functionality
 4. Fix issues
 5. Commit to Git
 6. Proceed to next phase
-
 ==================================================
 PORTFOLIO VALUE
 ===============
-
 By completing all phases, you demonstrate:
-
 * React Frontend
 * Spring Boot Microservices
 * Security
@@ -634,8 +1005,6 @@ By completing all phases, you demonstrate:
 * Kubernetes
 * CI/CD
 * Production Engineering Practices
-
-
 ==================================================
 NODE JS FOR REACT
 ===============
@@ -647,37 +1016,25 @@ Keep all default settings.
 Ensure Add to PATH is enabled.
 Complete the installation.
 Verify Installation
-
 Open a new Command Prompt and run:
-
 node -v
 npm -v
-
 Expected output:
-
 v24.15.0
 11.x.x
 Next Step: Create React Project
-
 After successful installation:
-
 cd C:\Users\vin\OneDrive\Documents\Workspace\ms-1-order-management-system
 npm create vite@latest ms-5-frontend-react -- --template react-ts
-
 Then:
-
 cd ms-5-frontend-react
 npm install
 npm install bootstrap axios react-router-dom
 npm run dev
-
 Open:
-
 http://localhost:5173
 Recommendation
-
 Proceed with Node.js 24.15.0 LTS. It is stable and fully compatible with your React + Vite + TypeScript frontend setup.
-
 ---
 Useful Commands
 Start Frontend

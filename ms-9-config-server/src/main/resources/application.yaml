@@ -9,15 +9,15 @@ spring:
     config:
       server:
         native:
-          search-locations: file:../config-repo
+          search-locations: ${CONFIG_REPO_LOCATION:file:../config-repo}
 
   profiles:
-    active: native
+    active: ${SPRING_PROFILES_ACTIVE:native}
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
 
 management:
   endpoints:

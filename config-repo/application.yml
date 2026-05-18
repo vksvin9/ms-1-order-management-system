@@ -1,26 +1,64 @@
 jwt:
-  secret: 1234567890123456789012345678901234567890123456789012345678901234
-  expiration: 86400000
+  secret: ${JWT_SECRET:1234567890123456789012345678901234567890123456789012345678901234}
+  expiration: ${JWT_EXPIRATION:86400000}
 
 spring:
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 2000
+        max-attempts: 10
+        max-interval: 5000
+        multiplier: 1.5
+
   datasource:
-    username: sa
-    password:
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:true}
+    open-in-view: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+
+  instance:
+    prefer-ip-address: true
 
 management:
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
 
   zipkin:
     tracing:
-      endpoint: http://localhost:9411/api/v2/spans
+      endpoint: ${ZIPKIN_URL:http://localhost:9411}/api/v2/spans
 
   endpoints:
     web:
       exposure:
-        include: health,info,env,refresh,metrics,prometheus
+        include: ${MANAGEMENT_ENDPOINTS:health,info,env,refresh,metrics,prometheus}
+
+  endpoint:
+    health:
+      show-details: ${HEALTH_SHOW_DETAILS:always}
+
+  prometheus:
+    metrics:
+      export:
+        enabled: ${PROMETHEUS_ENABLED:true}
 
 logging:
   level:
-    root: INFO
+    root: ${LOG_LEVEL_ROOT:INFO}

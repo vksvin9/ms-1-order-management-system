@@ -12,15 +12,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(
-            ServerHttpSecurity http) {
-
+            ServerHttpSecurity http
+    ) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .logout(ServerHttpSecurity.LogoutSpec::disable)
+                .httpBasic(
+                        ServerHttpSecurity.HttpBasicSpec::disable
+                )
+                .formLogin(
+                        ServerHttpSecurity.FormLoginSpec::disable
+                )
+                .logout(
+                        ServerHttpSecurity.LogoutSpec::disable
+                )
                 .authorizeExchange(exchange -> exchange
-                        .anyExchange().permitAll()
+                        // Allow Actuator endpoints
+                        .pathMatchers("/actuator/**")
+                        .permitAll()
+
+                        // Allow all other requests
+                        .anyExchange()
+                        .permitAll()
                 )
                 .build();
     }
