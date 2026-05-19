@@ -1,7 +1,7 @@
 import apiClient from "../api/apiClient";
 import type { ApiResponse } from "../types/api-response";
 
-const AUTH_API = "/api/auth";
+const AUTH_API = "/auth";
 
 const TOKEN_KEY = "jwt_token";
 const USERNAME_KEY = "username";

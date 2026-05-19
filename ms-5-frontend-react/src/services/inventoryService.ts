@@ -2,7 +2,7 @@ import apiClient from '../api/apiClient';
 import type { ApiResponse } from '../types/api-response';
 import type { Inventory } from '../types/inventory';
 
-const INVENTORY_API = '/api/inventory';
+const INVENTORY_API = '/inventory';
 
 export const getAllInventory = async (): Promise<Inventory[]> => {
   const response =

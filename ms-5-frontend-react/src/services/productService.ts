@@ -2,7 +2,7 @@ import apiClient from '../api/apiClient';
 import type { ApiResponse } from '../types/api-response';
 import type { Product } from '../types/product';
 
-const PRODUCT_API = '/api/products';
+const PRODUCT_API = '/products';
 
 export const getAllProducts = async (): Promise<Product[]> => {
   const response = await apiClient.get<ApiResponse<Product[]>>(PRODUCT_API);

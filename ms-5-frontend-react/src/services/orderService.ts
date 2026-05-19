@@ -4,7 +4,7 @@ import { Logger } from "./logger";
 import type { ApiResponse } from "../types/api-response";
 import type { Order } from "../types/order";
 
-const ORDER_API = "/api/orders";
+const ORDER_API = "/orders";
 
 export const getAllOrders = async (): Promise<Order[]> => {
   const methodName = "getAllOrders";

@@ -697,175 +697,483 @@ Outcome:
 Production-style orchestration
 ---
 Objective
-
-Deploy the complete order-management-system to Kubernetes using:
-
-Deployments
-Services
-ConfigMaps
-Secrets
-Ingress
-Outcome
-
-A production-style environment running on:
-
-Minikube or
-kind
+	Deploy the complete order-management-system to Kubernetes using:
+	Deployments
+	Services
+	ConfigMaps
+	Secrets
+	Ingress
+	Outcome
+	A production-style environment running on:
+	Minikube or
+	kind
 Architecture in Kubernetes
-7
-Ingress
-   ↓
-Frontend Service
-   ↓
-API Gateway Service
-   ↓
--------------------------------------------------
-| Auth | Product | Inventory | Order | Notification |
--------------------------------------------------
-   ↓
-Config Server
-   ↓
-Discovery Server
+	Ingress
+	   ↓
+	Frontend Service
+	   ↓
+	API Gateway Service
+	   ↓
+	-------------------------------------------------
+	| Auth | Product | Inventory | Order | Notification |
+	-------------------------------------------------
+	   ↓
+	Config Server
+	   ↓
+	Discovery Server
 Prerequisites
-
-Before starting Phase 22, ensure:
-
-Phase 20 (Docker) completed
-Phase 21 (Docker Compose) completed and working
-Docker images built locally
-Docker Desktop running
-Recommended Local Kubernetes Platform
-Use Minikube (Recommended)
-
+	Before starting Phase 22, ensure:
+	Phase 20 (Docker) completed
+	Phase 21 (Docker Compose) completed and working
+	Docker images built locally
+	Docker Desktop running
+	Recommended Local Kubernetes Platform
+	Use Minikube (Recommended)
 Minikube
-
-Why:
-
-Simplest for learning
-Includes ingress support
-Excellent for Spring Boot microservices
+	Why:
+	Simplest for learning
+	Includes ingress support
+	Excellent for Spring Boot microservices
 Installation Commands (Windows PowerShell)
-winget install Kubernetes.minikube
-winget install Kubernetes.kubectl
-
-Verify:
-
-minikube version
-kubectl version --client
+	#Minikube - Creates a local Kubernetes cluster
+	winget install Kubernetes.minikube
+	#kubectl - Manages and deploys to the cluster
+	winget install Kubernetes.kubectl
+	Verify:
+		minikube version
+		kubectl version --client
 Start Cluster
-minikube start --driver=docker --cpus=4 --memory=8192
-
-Verify:
-
-kubectl get nodes
-
-Expected:
-
-minikube   Ready
+	minikube start --driver=docker --cpus=2 --memory=3000
+		minikube   → Command-line tool used to create and manage a local Kubernetes cluster.
+		start      → Creates and starts a Kubernetes cluster if it does not already exist.
+		--driver   → Specifies which virtualization/container technology Minikube should use.
+		docker     → Uses Docker Desktop containers as the infrastructure for the cluster.
+		--cpus     → Allocates a specific number of CPU cores to the Minikube cluster.
+		4          → Assigns 4 CPU cores to the Kubernetes cluster.
+		--memory   → Allocates a specific amount of RAM to the Minikube cluster.
+		8192       → Assigns 8192 MB (8 GB) of memory to the Kubernetes cluster.
+	Verify: 
+		kubectl get nodes
+			kubectl → Kubernetes command-line tool used to communicate with a Kubernetes cluster.
+			get     → Retrieves and displays Kubernetes resources.
+			nodes   → Refers to the machines (virtual or physical) that run the Kubernetes cluster.
+	Expected:
+		minikube   Ready
 Enable Ingress Controller
-minikube addons enable ingress
-
-Verify:
-
-kubectl get pods -n ingress-nginx
+	The NGINX Ingress Controller acts as a reverse proxy inside Kubernetes and routes external traffic to your services.
+	Example flow: Browser → Ingress → frontend-react-service → API Gateway → Microservices
+	minikube addons enable ingress
+		→ Installs and starts the NGINX Ingress Controller so external HTTP/HTTPS requests can be routed to your Kubernetes services using Ingress resources.
+		minikube → Command-line tool used to manage a local Kubernetes cluster.
+		addons   → Built-in optional components that can be installed into the Minikube cluster.
+		enable   → Installs and activates the specified addon.
+		ingress  → The NGINX Ingress Controller addon that routes external HTTP/HTTPS traffic to Kubernetes Services.
+	Verify:
+		kubectl get pods -n ingress-nginx
+			kubectl → Kubernetes command-line tool used to communicate with the cluster.
+			get → Retrieves and displays Kubernetes resources.
+			pods → Shows the running containers grouped as Pods.
+			-n → Specifies the Kubernetes namespace to query.
+			ingress-nginx → The namespace where the NGINX Ingress Controller components are installed.
 Kubernetes Folder Structure
-
-Create the following directory in the project root:
-
-k8s/
-├── namespace.yml
-├── configmap.yml
-├── secret.yml
-├── config-server/
-├── discovery-server/
-├── auth-service/
-├── product-service/
-├── inventory-service/
-├── order-service/
-├── notification-service/
-├── api-gateway/
-├── frontend-react/
-└── ingress.yml
-Phase 22 Implementation Order
-Phase 22 Implementation Order
-
-Recommended sequence for Kubernetes deployment.
-
-0
-3
-6
-9
-12
-Namespace
-ConfigMap
-Secret
-Config Server
-Discovery Server
-Backend Services
-API Gateway
-Frontend
-Ingress
-Kubernetes Concepts You Will Implement
-Concept	Purpose
-Namespace	Isolate project resources
-ConfigMap	Non-sensitive environment variables
-Secret	JWT and passwords
-Deployment	Manage Pods
-Service	Internal networking
-Ingress	External access
-Readiness Probe	Wait until service is healthy
-Persistent Volume	Optional for databases
-Images Used in Kubernetes
-
-The same Docker images from Phase 21 will be reused:
-
-config-server:1.0
-discovery-server:1.0
-auth-service:1.0
-product-service:1.0
-inventory-service:1.0
-order-service:1.0
-notification-service:1.0
-api-gateway:1.0
-frontend-react:1.0
+	Create the following directory in the project root:
+	k8s/
+	├── namespace.yml
+	├── configmap.yml
+	├── secret.yml
+	├── config-server/
+	├── discovery-server/
+	├── auth-service/
+	├── product-service/
+	├── inventory-service/
+	├── order-service/
+	├── notification-service/
+	├── api-gateway/
+	├── frontend-react/
+	└── ingress.yml
+	Create Kubernetes Directory Structure
+		mkdir k8s
+		mkdir k8s\config-server
+		mkdir k8s\discovery-server
+		mkdir k8s\auth-service
+		mkdir k8s\product-service
+		mkdir k8s\inventory-service
+		mkdir k8s\order-service
+		mkdir k8s\notification-service
+		mkdir k8s\api-gateway
+		mkdir k8s\frontend-react
+		New-Item -ItemType File k8s\namespace.yml
+		New-Item -ItemType File k8s\configmap.yml
+		New-Item -ItemType File k8s\secret.yml
+		New-Item -ItemType File k8s\ingress.yml
+		Verify Structure
+		tree k8s /F
+	k8s/                    → Root folder containing all Kubernetes manifests.
+	namespace.yml           → Creates a dedicated Kubernetes namespace.
+	configmap.yml           → Stores non-sensitive environment variables.
+	secret.yml              → Stores sensitive values such as JWT secrets.
+	config-server/          → Deployment and Service manifests for Config Server.
+	discovery-server/       → Deployment and Service manifests for Eureka.
+	auth-service/           → Deployment and Service manifests for Auth Service.
+	product-service/        → Deployment and Service manifests for Product Service.
+	inventory-service/      → Deployment and Service manifests for Inventory Service.
+	order-service/          → Deployment and Service manifests for Order Service.
+	notification-service/   → Deployment and Service manifests for Notification Service.
+	api-gateway/            → Deployment and Service manifests for API Gateway.
+	frontend-react/         → Deployment and Service manifests for React Frontend.
+	ingress.yml             → Routes external traffic into the cluster.
+Phase 22 Implementation Order - Recommended sequence for Kubernetes deployment.
+	Namespace         → Creates an isolated workspace in Kubernetes so all project resources are grouped together and separated from other applications.
+	ConfigMap         → Stores non-sensitive configuration values so environment variables can be managed centrally without changing code.
+	Secret            → Stores sensitive values such as JWT secrets and passwords securely instead of hardcoding them.
+	Config Server     → Runs first because all microservices fetch their configuration from this service at startup.
+	Discovery Server  → Runs after Config Server and provides service registration and discovery for all microservices.
+	Backend Services  → Core business microservices (Auth, Product, Inventory, Order, Notification) that implement application functionality.
+	API Gateway       → Provides a single entry point that routes external requests to the appropriate backend service.
+	Frontend          → Hosts the React user interface that users access in the browser.
+	Deployment        → Ensures the required number of Pods are created and automatically restarted if they fail.
+	Service           → Provides a stable DNS name and IP address to access Pods inside the cluster.
+	Ingress           → Acts as an HTTP/HTTPS reverse proxy to expose Services outside the cluster.
+	Readiness Probe   → Prevents traffic from reaching a Pod until the application is fully started and healthy.
+	Persistent Volume → Provides durable storage so data survives Pod restarts.
 Build Images Before Deployment
-mvn clean package -DskipTests
-
-docker build --no-cache -t config-server:1.0 -f ms-9-config-server/Dockerfile .
-docker build --no-cache -t discovery-server:1.0 ms-6-discovery-server
-docker build --no-cache -t auth-service:1.0 ms-8-auth-service
-docker build --no-cache -t product-service:1.0 ms-2-product-service
-docker build --no-cache -t inventory-service:1.0 ms-3-inventory-service
-docker build --no-cache -t order-service:1.0 ms-4-order-service
-docker build --no-cache -t notification-service:1.0 ms-10-notification-service
-docker build --no-cache -t api-gateway:1.0 ms-7-api-gateway
-docker build --no-cache -t frontend-react:1.0 ms-5-frontend-react
-Success Criteria
-
-At the end of Phase 22:
-
-kubectl get pods shows all pods Running
-kubectl get svc shows all services
-Ingress exposes the application
-Frontend accessible in browser
-Product creation, inventory update, and order placement work successfully
-Files to Be Created in This Phase
-namespace.yml
-configmap.yml
-secret.yml
-Deployment and Service YAML for every component
-ingress.yml
-Git Commit (After Completion)
-git add k8s
-git commit -m "Phase 22 - Deploy application to Kubernetes"
-Next Step
-
-Type next to begin with:
-
-k8s/namespace.yml
-k8s/configmap.yml
-k8s/secret.yml
-
+	mvn clean package -DskipTests
+	docker build --no-cache -t config-server:1.0 -f ms-9-config-server/Dockerfile .
+	docker build --no-cache -t discovery-server:1.0 ms-6-discovery-server
+	docker build --no-cache -t auth-service:1.0 ms-8-auth-service
+Load All Images - Copies a Docker image into Minikube's internal image store.
+	minikube image load config-server:1.0
+	minikube image load discovery-server:1.0
+	minikube image load auth-service:1.0
+1)File: k8s/namespace.yml
+	Apply the Namespace
+		kubectl apply -f k8s/namespace.yml
+		Verify Namespace
+			kubectl get namespaces
+		Expected output includes:
+			order-management
+	Why Use a Namespace?
+		A namespace groups all resources for this project so they are isolated from other Kubernetes workloads.
+	Example:
+		Pods
+		Services
+		ConfigMaps
+		Secrets
+		Ingress
+	All will be created inside:
+		order-management
+	Use the Namespace by Default
+		kubectl config set-context --current --namespace=order-management
+		Verify:
+			kubectl config view --minify --output 'jsonpath={..namespace}'
+		Expected:
+			order-management
+2)File: k8s/configmap.yml & File: k8s/secret.yml
+	Apply Both Files
+		kubectl apply -f k8s/configmap.yml
+		kubectl apply -f k8s/secret.yml
+		Verify Resources
+			kubectl get configmap
+			kubectl get secret
+		Expected output includes:
+			order-management-config
+			order-management-secret
+3)File: k8s/config-server/deployment.yml & File: k8s/config-server/service.yml
+	Why We Create deployment.yml and service.yml
+		For every microservice in Kubernetes, two core files are typically required:
+		Deployment → Defines how the application should run - Runs and manages the application Pods.
+		Service → Defines how other applications can access it - Provides a permanent internal network address to access those Pods.
+	1. Deployment – Runs the Application
+		What It Means
+			A Deployment is a Kubernetes resource that tells the cluster:
+			Which Docker image to run
+			How many instances (Pods) to maintain
+			Which ports the container exposes
+			Which environment variables to inject
+			How to check application health
+			When to restart the application
+		Example
+			image: discovery-server:1.0
+			replicas: 1
+			Meaning:
+			Run the discovery-server:1.0 image
+			Keep exactly one instance running at all times
+		Why We Use It
+			Without a Deployment, Kubernetes does not know what application to run.
+	2. Service – Creates a Stable Network Address
+		What It Means
+			A Service gives Pods a permanent internal DNS name and IP address.
+			Pods are temporary and their IP addresses change whenever they restart.
+		Example
+			metadata:
+			  name: discovery-server
+		This creates a stable internal hostname:
+			http://discovery-server:8761
+		Why We Use It
+			Other services can reliably call:
+			http://config-server:8888
+			http://discovery-server:8761
+			http://inventory-service:8082
+			even if Pod IP addresses change.
+		Real-World Analogy
+			Kubernetes Resource		Analogy
+			Deployment				Factory manager that ensures workers are always present
+			Pod						Individual worker
+			Service					Reception desk with a permanent phone number
+		Discovery Server Example Flow
+			deployment.yml
+				↓
+			Kubernetes creates Pod
+				↓
+			Pod runs discovery-server:1.0
+				↓
+			service.yml
+				↓
+			Creates DNS name: discovery-server
+				↓
+			Other services call http://discovery-server:8761
+		End-to-End Flow
+			Docker Image
+				↓
+			Deployment
+				↓
+			Pod
+				↓
+			Service
+				↓
+			Stable DNS Name
+				↓
+			Other Services Communicate
+		What Happens When You Apply the Files
+			Deployment
+				kubectl apply -f deployment.yml
+			Kubernetes:
+				Reads the Deployment
+				Creates a ReplicaSet
+				Creates a Pod
+				Starts the container
+				Monitors health
+				Restarts if necessary
+				Service
+				kubectl apply -f service.yml
+				Kubernetes:
+				Creates a stable virtual IP
+				Creates internal DNS
+				Routes traffic to matching Pods
+		Service
+			kubectl apply -f service.yml
+		Kubernetes:
+			Creates a stable virtual IP
+			Creates internal DNS
+			Routes traffic to matching Pods
+	*Apply Config Server
+		kubectl apply -f k8s/config-server/deployment.yml
+		kubectl apply -f k8s/config-server/service.yml
+		Verify Deployment
+			kubectl get pods
+			kubectl get svc
+		Expected:
+			Pod config-server-* in Running state
+			Service config-server
+		Check Logs
+			kubectl logs -f deployment/config-server
+			kubectl describe pod config-server-74898777b4-lddmz
+	Test Health Endpoint
+		kubectl port-forward service/config-server 8888:8888
+	Open:
+		http://localhost:8888/actuator/health
+		Expected response:
+			{"status":"UP"}
+4)File: k8s/discovery-server/deployment.yml & File: k8s/discovery-server/service.yml
+	Load Discovery Server Image into Minikube
+		minikube image load discovery-server:1.0 → Copies the Discovery Server Docker image into Minikube.
+	Apply the Manifests
+		kubectl apply -f k8s/discovery-server/deployment.yml          → Creates or updates the Discovery Server Deployment.
+		kubectl apply -f k8s/discovery-server/service.yml             → Creates or updates the Discovery Server Service.
+	Verify Deployment
+		kubectl get pods                         → Shows the running Pods.
+		kubectl get svc                          → Shows the Services.
+		kubectl logs -f deployment/discovery-server → Streams Discovery Server logs.
+	Expected:
+		discovery-server-* pod becomes 1/1 Running
+		discovery-server service is created
+		Eureka starts successfully and registers with no errors
+	Test Eureka Dashboard (Optional)
+		kubectl port-forward service/discovery-server 8761:8761  → Exposes the internal Service on your local machine.
+		Open:
+			http://localhost:8761
+5))File:
+	# Create Auth Service files
+	New-Item -ItemType File k8s\auth-service\deployment.yml
+	New-Item -ItemType File k8s\auth-service\service.yml
+	# Create Product Service files
+	New-Item -ItemType File k8s\product-service\deployment.yml
+	New-Item -ItemType File k8s\product-service\service.yml
+	# Create Inventory Service files
+	New-Item -ItemType File k8s\inventory-service\deployment.yml
+	New-Item -ItemType File k8s\inventory-service\service.yml
+	# Create Order Service files
+	New-Item -ItemType File k8s\order-service\deployment.yml
+	New-Item -ItemType File k8s\order-service\service.yml
+	# Create Notification Service files
+	New-Item -ItemType File k8s\notification-service\deployment.yml
+	New-Item -ItemType File k8s\notification-service\service.yml
+	# Create Api-Gateway Service files
+	New-Item -ItemType File k8s\api-gateway\deployment.yml
+	New-Item -ItemType File k8s\api-gateway\service.yml
+	#Create Frontend Files
+	New-Item -ItemType File k8s\frontend-react\deployment.yml
+	New-Item -ItemType File k8s\frontend-react\service.yml
+##Build Images Before Deployment
+	docker build --no-cache -t product-service:1.0 ms-2-product-service
+	docker build --no-cache -t inventory-service:1.0 ms-3-inventory-service
+	docker build --no-cache -t order-service:1.0 ms-4-order-service
+	docker build --no-cache -t notification-service:1.0 ms-10-notification-service
+	docker build --no-cache -t api-gateway:1.0 ms-7-api-gateway
+	docker build --no-cache -t frontend-react:1.0 ms-5-frontend-react
+##Load Image and Deploy
+	# Config Server
+	minikube image load config-server:1.0
+	kubectl apply -f k8s/config-server/deployment.yml
+	kubectl apply -f k8s/config-server/service.yml
+	# Discovery Server
+	minikube image load discovery-server:1.0
+	kubectl apply -f k8s/discovery-server/deployment.yml
+	kubectl apply -f k8s/discovery-server/service.yml
+	# Auth Service
+	minikube image load auth-service:1.0
+	kubectl apply -f k8s/auth-service/deployment.yml
+	kubectl apply -f k8s/auth-service/service.yml
+	# Product Service
+	minikube image load product-service:1.0
+	kubectl apply -f k8s/product-service/deployment.yml
+	kubectl apply -f k8s/product-service/service.yml
+	# Inventory Service
+	minikube image load inventory-service:1.0
+	kubectl apply -f k8s/inventory-service/deployment.yml
+	kubectl apply -f k8s/inventory-service/service.yml
+	# Order Service
+	minikube image load order-service:1.0
+	kubectl apply -f k8s/order-service/deployment.yml
+	kubectl apply -f k8s/order-service/service.yml
+	# Notification Service
+	minikube image load notification-service:1.0
+	kubectl apply -f k8s/notification-service/deployment.yml
+	kubectl apply -f k8s/notification-service/service.yml
+	# API Gateway
+	minikube image load api-gateway:1.0
+	kubectl apply -f k8s/api-gateway/deployment.yml
+	kubectl apply -f k8s/api-gateway/service.yml
+	# Frontend
+	minikube image load frontend-react:1.0
+	kubectl apply -f k8s/frontend-react/deployment.yml
+	kubectl apply -f k8s/frontend-react/service.yml
+##Recommended Approach - You can load all images first, then apply all manifests.
+	#Load All Images
+	minikube image load config-server:1.0
+	minikube image load discovery-server:1.0
+	minikube image load auth-service:1.0
+	minikube image load product-service:1.0
+	minikube image load inventory-service:1.0
+	minikube image load order-service:1.0
+	minikube image load notification-service:1.0
+	minikube image load api-gateway:1.0
+	minikube image load frontend-react:1.0
+	#List All Images in Minikube
+	minikube image ls
+	#Check a Specific Image
+	minikube image ls | Select-String "config-server"
+	Recommended Way to Verify All Required Images
+	minikube image ls | Select-String "config-server|discovery-server|auth-service|product-service|inventory-service|order-service|notification-service|api-gateway|frontend-react"
+	#Apply All Manifests - will create conflict if congifg server not fully  up
+	kubectl apply -f k8s/
+	#Option 2 (Sequential for Learning and Troubleshooting)
+	kubectl config set-context --current --namespace=order-management
+	kubectl apply -f k8s/config-server/
+	kubectl wait --for=condition=available deployment/config-server --timeout=300s
+	kubectl apply -f k8s/discovery-server/
+	kubectl wait --for=condition=available deployment/discovery-server --timeout=300s
+	kubectl apply -f k8s/auth-service/
+	kubectl apply -f k8s/product-service/
+	kubectl apply -f k8s/inventory-service/
+	kubectl apply -f k8s/order-service/
+	kubectl apply -f k8s/notification-service/
+	kubectl apply -f k8s/api-gateway/
+	kubectl apply -f k8s/frontend-react/
+	kubectl apply -f k8s/ingress.yml
+	#Apply the Ingress
+	kubectl apply -f k8s/ingress.yml
+	#Verify the Ingress
+	kubectl get ingress -n order-management
+	#Get Minikube IP
+	minikube ip
+		Example output:
+		192.168.49.2
+	#Update Windows Hosts File
+		Edit:
+		C:\Windows\System32\drivers\etc\hosts
+		Add:
+		192.168.49.2 order-management.local
+		Use the IP returned by minikube ip.
+	#Open the Application
+		http://order-management.local
+		API requests will automatically route through:
+		http://order-management.local/api
+	#Verify All Resources
+		kubectl get pods -n order-management
+		kubectl get svc -n order-management
+		kubectl get ingress -n order-management
+#You can temporarily scale down or remove the less critical services and keep only the minimum set required for login and basic product management.
+	Option 1 (Recommended): Scale Down Existing Deployments
+		kubectl scale deployment inventory-service --replicas=0 -n order-management
+		kubectl scale deployment order-service --replicas=0 -n order-management
+		kubectl scale deployment notification-service --replicas=0 -n order-management
+		Scaling to zero is preferable because you can restore them instantly.
+		#Restore Later
+		kubectl scale deployment inventory-service --replicas=1 -n order-management
+		kubectl scale deployment order-service --replicas=1 -n order-management
+		kubectl scale deployment notification-service --replicas=1 -n order-management
+	Option 2: Delete the Deployments
+		kubectl delete deployment inventory-service -n order-management
+		kubectl delete deployment order-service -n order-management
+		kubectl delete deployment notification-service -n order-management
+	Verify Remaining Pods
+		kubectl get pods -n order-management
+	Expected active pods:
+		config-server
+		discovery-server
+		auth-service
+		product-service
+		api-gateway
+		frontend-react
+	# 1. Verify Minikube is running
+	minikube status
+	# 2. Verify Ingress addon is enabled
+	minikube addons list | findstr ingress
+	# 3. Start tunnel in a separate Administrator PowerShell (must remain running)
+	minikube tunnel
+	# 4. Verify host resolves correctly
+	ping order-management.local
+	# 5. Check Ingress
+	kubectl get ingress -n order-management
+	# 6. Check Services
+	kubectl get svc -n order-management
+	# 7. Check Pods
+	kubectl get pods -n order-management
+	# 8. Restart ingress controller if needed
+	kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx
+	# 9. Wait until ingress controller is ready
+	kubectl get pods -n ingress-nginx -w
+	# 10. Restart application deployments
+	kubectl rollout restart deployment frontend-react -n order-management
+	kubectl rollout restart deployment api-gateway -n order-management
+	kubectl rollout restart deployment auth-service -n order-management
+	# 11. Verify LoadBalancer external IP
+	kubectl get svc -n ingress-nginx
+	# 12. Test from terminal
+	curl http://order-management.local
+	# 13. Flush DNS cache
+	ipconfig /flushdns
 ==================================================
 PHASE 23: CI/CD
 ===============
